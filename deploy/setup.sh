@@ -11,18 +11,19 @@ echo "Installing runtime libraries..."
 sudo apt-get update
 sudo apt-get install -y libdrm2 libgbm1 libegl1 libgles2 curl jq netcat-openbsd
 
-# Ensure install directory exists
-sudo mkdir -p ${INSTALL_DIR}
-
-# Download scripts from GitHub
+# Download scripts from GitHub to /tmp first, then move into place
 echo "Downloading scripts from GitHub..."
-sudo curl -sfL -o ${INSTALL_DIR}/roshamgo-startup.sh "${GITHUB_RAW}/roshamgo-startup.sh" || { echo "ERROR: Failed to download roshamgo-startup.sh"; exit 1; }
+curl -sfL -o /tmp/roshamgo-startup.sh "${GITHUB_RAW}/roshamgo-startup.sh" || { echo "ERROR: Failed to download roshamgo-startup.sh"; exit 1; }
+curl -sfL -o /tmp/roshamgo.service "${GITHUB_RAW}/roshamgo.service" || { echo "ERROR: Failed to download roshamgo.service"; exit 1; }
+
+sudo mkdir -p ${INSTALL_DIR}
+sudo mv /tmp/roshamgo-startup.sh ${INSTALL_DIR}/roshamgo-startup.sh
 sudo chmod +x ${INSTALL_DIR}/roshamgo-startup.sh
 id roshambo &>/dev/null && sudo chown roshambo:roshambo ${INSTALL_DIR}/roshamgo-startup.sh
-echo "  Downloaded roshamgo-startup.sh"
+echo "  Installed roshamgo-startup.sh"
 
-sudo curl -sfL -o /etc/systemd/system/roshamgo.service "${GITHUB_RAW}/roshamgo.service" || { echo "ERROR: Failed to download roshamgo.service"; exit 1; }
-echo "  Downloaded roshamgo.service"
+sudo mv /tmp/roshamgo.service /etc/systemd/system/roshamgo.service
+echo "  Installed roshamgo.service"
 
 # Boot to multi-user (no desktop)
 echo "Setting default target to multi-user..."
