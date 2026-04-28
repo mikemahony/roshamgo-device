@@ -9,7 +9,8 @@ echo "=== RoShamGo Pi Setup ==="
 # Install dependencies first (need curl for downloads)
 echo "Installing runtime libraries..."
 sudo apt-get update
-sudo apt-get install -y libdrm2 libgbm1 libegl1 libgles2 curl jq netcat-openbsd
+sudo apt-get install -y libdrm2 libgbm1 libegl1 libgles2 curl jq netcat-openbsd \
+    xserver-xorg xinit x11-xserver-utils
 
 # Download scripts from GitHub to /tmp first, then move into place
 echo "Downloading scripts from GitHub..."

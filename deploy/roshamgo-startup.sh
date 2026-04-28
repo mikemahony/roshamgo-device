@@ -62,9 +62,23 @@ check_existing_binary() {
     fi
 }
 
+start_x() {
+    if [ -z "${DISPLAY:-}" ]; then
+        log "Starting X server..."
+        Xorg :0 -nolisten tcp &
+        X_PID=$!
+        export DISPLAY=:0
+        sleep 2
+        # Hide cursor and disable screen blanking
+        xset s off -dpms 2>/dev/null || true
+        log "X server started on :0 (PID $X_PID)"
+    fi
+}
+
 start_binary() {
+    start_x
     log "Starting $BINARY_PATH"
-    "$BINARY_PATH" &
+    DISPLAY=:0 "$BINARY_PATH" &
     BINARY_PID=$!
     log "Binary started with PID $BINARY_PID"
 }
@@ -80,6 +94,10 @@ stop_binary() {
 
 cleanup() {
     stop_binary
+    if [ -n "${X_PID:-}" ] && kill -0 "$X_PID" 2>/dev/null; then
+        log "Stopping X server (PID $X_PID)"
+        kill "$X_PID"
+    fi
     rm -f "$FIFO" "$SIGNAL_FILE"
     log "Cleanup complete"
 }
