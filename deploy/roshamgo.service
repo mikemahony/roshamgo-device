@@ -1,0 +1,22 @@
+[Unit]
+Description=RoShamGo Slot Machine
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/home/roshambo/roshamgo-startup.sh
+WorkingDirectory=/home/roshambo
+Restart=always
+RestartSec=10
+Environment=RUST_LOG=info
+Environment=TIME_UNTIL_IDLE_SECS=10
+Environment=TAUNT_INTERVAL_SECS=30
+Environment=ARROW_COLOR_CYCLE_SECS=30
+Environment=SILLY_ROLL_AVG=20
+Environment=ROSHAMBO_WEIGHT=70
+Environment=ROLL_FLASH_ENABLED=true
+Environment=ROLL_SHAKE_ENABLED=true
+
+[Install]
+WantedBy=multi-user.target
