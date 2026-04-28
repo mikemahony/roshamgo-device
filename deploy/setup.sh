@@ -2,7 +2,7 @@
 set -euo pipefail
 
 GITHUB_RAW="https://raw.githubusercontent.com/mikemahony/roshamgo-device/main/deploy"
-INSTALL_DIR="/home/roshambo"
+INSTALL_DIR="/home/roshamgo"
 
 echo "=== RoShamGo Pi Setup ==="
 
@@ -10,7 +10,8 @@ echo "=== RoShamGo Pi Setup ==="
 echo "Installing runtime libraries..."
 sudo apt-get update
 sudo apt-get install -y libdrm2 libgbm1 libegl1 libgles2 curl jq netcat-openbsd \
-    xserver-xorg xinit x11-xserver-utils
+    xserver-xorg xinit x11-xserver-utils \
+    mesa-utils libgl1-mesa-dri
 
 # Download scripts from GitHub to /tmp first, then move into place
 echo "Downloading scripts from GitHub..."
@@ -20,7 +21,7 @@ curl -sfL -o /tmp/roshamgo.service "${GITHUB_RAW}/roshamgo.service" || { echo "E
 sudo mkdir -p ${INSTALL_DIR}
 sudo mv /tmp/roshamgo-startup.sh ${INSTALL_DIR}/roshamgo-startup.sh
 sudo chmod +x ${INSTALL_DIR}/roshamgo-startup.sh
-id roshambo &>/dev/null && sudo chown roshambo:roshambo ${INSTALL_DIR}/roshamgo-startup.sh
+id roshamgo &>/dev/null && sudo chown roshamgo:roshamgo ${INSTALL_DIR}/roshamgo-startup.sh
 echo "  Installed roshamgo-startup.sh"
 
 sudo mv /tmp/roshamgo.service /etc/systemd/system/roshamgo.service

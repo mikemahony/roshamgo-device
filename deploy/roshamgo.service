@@ -5,8 +5,8 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/home/roshambo/roshamgo-startup.sh
-WorkingDirectory=/home/roshambo
+ExecStart=/home/roshamgo/roshamgo-startup.sh
+WorkingDirectory=/home/roshamgo
 Restart=always
 RestartSec=10
 Environment=RUST_LOG=info

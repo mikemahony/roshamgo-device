@@ -1,7 +1,7 @@
 #!/bin/bash
 set -uo pipefail
 
-BINARY_PATH="/home/roshambo/ROSHAMGO"
+BINARY_PATH="/home/roshamgo/ROSHAMGO"
 GITHUB_REPO="mikemahony/roshamgo-device"
 ASSET_NAME="roshamgo-device-linux-aarch64"
 LISTEN_PORT=3000
