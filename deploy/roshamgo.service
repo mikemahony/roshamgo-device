@@ -9,6 +9,7 @@ ExecStart=/home/roshamgo/roshamgo-startup.sh
 WorkingDirectory=/home/roshamgo
 Restart=always
 RestartSec=10
+Environment=MESA_GL_VERSION_OVERRIDE=3.3
 Environment=RUST_LOG=info
 Environment=TIME_UNTIL_IDLE_SECS=10
 Environment=TAUNT_INTERVAL_SECS=30

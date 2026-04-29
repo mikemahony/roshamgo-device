@@ -78,7 +78,7 @@ start_x() {
 start_binary() {
     start_x
     log "Starting $BINARY_PATH"
-    DISPLAY=:0 "$BINARY_PATH" &
+    DISPLAY=:0 MESA_GL_VERSION_OVERRIDE=3.3 "$BINARY_PATH" &
     BINARY_PID=$!
     log "Binary started with PID $BINARY_PID"
 }
