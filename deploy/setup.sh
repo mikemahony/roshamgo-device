@@ -43,6 +43,14 @@ if ! grep -q "dtoverlay=pwm,pin=18,func=2" /boot/firmware/config.txt; then
     echo "dtoverlay=pwm,pin=18,func=2" | sudo tee -a /boot/firmware/config.txt
 fi
 
+# Disable console blanking (prevents HDMI signal dropout)
+if [ -f /boot/firmware/cmdline.txt ]; then
+    if ! grep -q "consoleblank=0" /boot/firmware/cmdline.txt; then
+        echo "Disabling console blanking..."
+        sudo sed -i 's/$/ consoleblank=0/' /boot/firmware/cmdline.txt
+    fi
+fi
+
 # Enable systemd service
 echo "Enabling systemd service..."
 sudo systemctl daemon-reload

@@ -100,35 +100,15 @@ check_existing_binary() {
 
 start_x() {
     if [ -z "${DISPLAY:-}" ]; then
-        # Write xorg config to disable screensaver/DPMS at server level
-        mkdir -p /etc/X11/xorg.conf.d
-        cat > /etc/X11/xorg.conf.d/10-no-screensaver.conf << 'XCONF'
-Section "ServerFlags"
-    Option "BlankTime" "0"
-    Option "StandbyTime" "0"
-    Option "SuspendTime" "0"
-    Option "OffTime" "0"
-EndSection
-
-Section "ServerLayout"
-    Option "BlankTime" "0"
-    Option "StandbyTime" "0"
-    Option "SuspendTime" "0"
-    Option "OffTime" "0"
-EndSection
-XCONF
+        # Disable kernel console blanking (HDMI signal dropout)
+        setterm --blank 0 --powerdown 0 2>/dev/null || true
+        echo 0 > /sys/module/kernel/parameters/consoleblank 2>/dev/null || true
 
         log "Starting X server..."
         Xorg :0 -nolisten tcp &
         X_PID=$!
         export DISPLAY=:0
         sleep 3
-        # Belt and suspenders: also disable via xset
-        DISPLAY=:0 xset s off 2>/dev/null || true
-        DISPLAY=:0 xset s noblank 2>/dev/null || true
-        DISPLAY=:0 xset -dpms 2>/dev/null || true
-        DISPLAY=:0 xset s 0 0 2>/dev/null || true
-        DISPLAY=:0 xset dpms 0 0 0 2>/dev/null || true
         log "X server started on :0 (PID $X_PID)"
     fi
 }
