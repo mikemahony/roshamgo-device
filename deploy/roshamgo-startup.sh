@@ -69,9 +69,7 @@ start_x() {
         X_PID=$!
         export DISPLAY=:0
         sleep 2
-        # Set resolution and disable screen blanking/cursor
-        xrandr --output HDMI-2 --mode 1920x1080 2>/dev/null || \
-        xrandr --output HDMI-1 --mode 1920x1080 2>/dev/null || true
+        # Disable screen blanking/cursor
         xset s off -dpms 2>/dev/null || true
         log "X server started on :0 (PID $X_PID)"
     fi
