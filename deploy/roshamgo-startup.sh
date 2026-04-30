@@ -69,8 +69,11 @@ start_x() {
         X_PID=$!
         export DISPLAY=:0
         sleep 2
-        # Disable screen blanking/cursor
-        xset s off -dpms 2>/dev/null || true
+        # Disable screen saver, blanking, DPMS, and cursor
+        xset s off 2>/dev/null || true
+        xset s noblank 2>/dev/null || true
+        xset -dpms 2>/dev/null || true
+        xset s 0 0 2>/dev/null || true
         log "X server started on :0 (PID $X_PID)"
     fi
 }
