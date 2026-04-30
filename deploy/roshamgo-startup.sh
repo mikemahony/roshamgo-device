@@ -3,10 +3,12 @@ set -uo pipefail
 
 BINARY_PATH="/home/roshamgo/ROSHAMGO"
 GITHUB_REPO="mikemahony/roshamgo-device"
+GITHUB_RAW="https://raw.githubusercontent.com/${GITHUB_REPO}/main/deploy"
 ASSET_NAME="roshamgo-device-linux-aarch64"
 LISTEN_PORT=3000
 RESTART_SECRET="restart"
 SIGNAL_FILE="/tmp/roshamgo-do-restart"
+SELF_UPDATE_DONE="/tmp/roshamgo-self-updated"
 FIFO=$(mktemp -u /tmp/roshamgo-fifo.XXXXXX)
 
 BINARY_PID=""
@@ -14,6 +16,40 @@ BINARY_PID=""
 log() {
     echo "[roshamgo-startup] $(date '+%Y-%m-%d %H:%M:%S') $1"
 }
+
+self_update() {
+    if [ -f "$SELF_UPDATE_DONE" ]; then
+        return
+    fi
+    touch "$SELF_UPDATE_DONE"
+
+    log "Checking for script updates from GitHub..."
+
+    # Update service file (env vars live here)
+    if curl -sfL --connect-timeout 5 -o /tmp/roshamgo.service.new "${GITHUB_RAW}/roshamgo.service" 2>/dev/null; then
+        if ! cmp -s /tmp/roshamgo.service.new /etc/systemd/system/roshamgo.service; then
+            cp /tmp/roshamgo.service.new /etc/systemd/system/roshamgo.service
+            systemctl daemon-reload
+            log "Updated roshamgo.service"
+        fi
+        rm -f /tmp/roshamgo.service.new
+    fi
+
+    # Update this script
+    local self_path="$(readlink -f "$0")"
+    if curl -sfL --connect-timeout 5 -o /tmp/roshamgo-startup.sh.new "${GITHUB_RAW}/roshamgo-startup.sh" 2>/dev/null; then
+        if ! cmp -s /tmp/roshamgo-startup.sh.new "$self_path"; then
+            cp /tmp/roshamgo-startup.sh.new "$self_path"
+            chmod +x "$self_path"
+            rm -f /tmp/roshamgo-startup.sh.new
+            log "Updated startup script — re-executing..."
+            exec "$self_path"
+        fi
+        rm -f /tmp/roshamgo-startup.sh.new
+    fi
+}
+
+self_update
 
 download_latest_binary() {
     log "Checking for latest release from GitHub..."
