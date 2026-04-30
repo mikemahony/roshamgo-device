@@ -68,12 +68,13 @@ start_x() {
         Xorg :0 -nolisten tcp &
         X_PID=$!
         export DISPLAY=:0
-        sleep 2
-        # Disable screen saver, blanking, DPMS, and cursor
-        xset s off 2>/dev/null || true
-        xset s noblank 2>/dev/null || true
-        xset -dpms 2>/dev/null || true
-        xset s 0 0 2>/dev/null || true
+        sleep 3
+        # Disable screen saver, blanking, and DPMS
+        DISPLAY=:0 xset s off 2>/dev/null || true
+        DISPLAY=:0 xset s noblank 2>/dev/null || true
+        DISPLAY=:0 xset -dpms 2>/dev/null || true
+        DISPLAY=:0 xset s 0 0 2>/dev/null || true
+        DISPLAY=:0 xset dpms 0 0 0 2>/dev/null || true
         log "X server started on :0 (PID $X_PID)"
     fi
 }
